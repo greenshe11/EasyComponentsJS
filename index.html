@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body{
+            opacity:0;
+            background-color: white ;
+        }
+
+        nice-button {
+            margin: 10px;
+            width: 100px;
+        }
+    </style>
+</head>
+
+<body>
+    <div style="display: flex; flex-direction: column;">
+        <nice-button id="nice-button" >Send</nice-button>
+        <nice-button id="nice-button-2" btn-style="background-color: green; color: white;"></nice-button>
+        <h2 id="display"></h2>
+    </div>
+</body>
+
+<script type="module">
+    
+    import '/components/button.js' // adds a custom HTML Element: <nice-button>; 
+    // useState and useEffect functions are imported from '/ecjs.v3.js' file via '/components/button.js'
+
+    const counter = useState(0) // create a state variable
+
+    // declare elements into variables
+    const display = document.getElementById('display')
+    const multiplierButton = document.getElementById('nice-button-2')
+    const incrementorButton = document.getElementById('nice-button')
+
+    // binds state variable into element
+    counter.bind(multiplierButton)
+    counter.bind(display)
+
+    // gain access to elements within the nice-button component; assign onclick handler
+    incrementorButton.elements.rippleButton.onclick = () => {
+        counter.update(counter.value() + 1) // updates state variable
+    }
+
+    // gain access to elements within the nice-button component; assign onclick handler
+    multiplierButton.elements.rippleButton.onclick = () => {
+        alert(counter.value() * 2) // make an alert containing value of state variable multiplied by 2
+    }
+
+    // runs whenever state variable is updated
+    useEffect(()=>{
+        multiplierButton.innerHTML = counter.value() * 2 // set text of button to display value of state variable multiplied by 2
+    }, [counter])
+
+    
+</script>
+
+</html>
