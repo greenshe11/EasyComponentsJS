@@ -19,3 +19,6 @@ EasyComponentsJS empowers developers to effortlessly build web components using 
 - **Customizability:** Easily tailor components to meet specific design requirements with minimal effort, while maintaining a clean separation of concerns.
 
 ---
+
+
+_v.alpha/dev/WIP_
