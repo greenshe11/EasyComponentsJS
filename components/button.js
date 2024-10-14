@@ -49,7 +49,6 @@ const template = /*html*/`
     #ec-btn-slot {
         display: inline-block;
         white-space: normal;
-        word-wrap: break-word;
         width: 100%; 
         font-size: 20px;
         color: white;
@@ -57,7 +56,7 @@ const template = /*html*/`
 
 </style>
 <button class="ripple-btn" id="ripple-btn">
-    <slot></slot> 
+    <slot id="ec-btn-slot"></slot> 
 </button>
 `
 
