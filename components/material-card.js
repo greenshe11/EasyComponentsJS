@@ -108,13 +108,13 @@ img {
 
 ecjs.createComponent('material-card', template, 
     (dom, vars)=>{
-        dom.title = dom.useState(dom.getAttribute('title')).bind('.title')
+        vars.title = dom.useState(dom.getAttribute('title')).bind('.title')
         dom.caption = dom.useState(dom.getAttribute('caption')).bind('.text')
         dom.price = dom.useState(dom.getAttribute('price')).bind('.price')
         dom.src = dom.useState()
         
         dom.cardAlert = () => {
-            alert(`${dom.title.value} is added to cart!`)
+            alert(`${vars.title.value} is added to cart!`)
         }
 
         dom.useEffect((dom)=>{
