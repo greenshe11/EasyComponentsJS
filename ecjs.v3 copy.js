@@ -25,11 +25,9 @@ async function createComponent (tagName, htmlString, script) {
             this.attachShadow({ mode: 'open' })
             this.variables = useState({vars: {dom: this}})
 
-            const identifier = `<${tagName}>{${componentCounter}}`
+            const identifier = `ecjs-component-id-${componentCounter}`
             componentCounter += 1
             componentsAll[identifier] = this
-            this.props = {}
-            this.propsProxy = new Proxy(this.props, this.propsHandler)
             
 
             if (htmlString){
@@ -48,57 +46,14 @@ async function createComponent (tagName, htmlString, script) {
         useState(initialValue){return useState(initialValue, this)}
         select (arg){return this.shadowRoot.querySelector(arg)}
         selectAll(arg){return this.shadowRoot.querySelectorAll(arg)}
-       
-        propsHandler = {
-            
-            set: (target, property, value) => {
-                if (property == 'states'){
-                    console.error(`Cannot assign ${value} to a reserved key "states".`)
-                    return () => {return this.props}
-                }
 
-                if (!(property in target)){
-                    target[property] = this.useState(value?value:this.getAttribute(property))
-                }else{
-                    target[property]._value = value
-                    target[property].invoke()
-                }
-
-                return target[property] // Return true to indicate successful assignment
-            },
-    
-            get: (target, property) => {
-                // Check if the property exists in the instance
-                if (property == 'states'){
-                    return () => {return this.props}
-                }
-                if (property in target) {
-                    if (property.startsWith('$')){
-                        return target[property]._value
-                    }
-                    return target[property]
-                }
-
-                
-                target[property] = this.useState(this.getAttribute(property))
-                
-                target['$'+property] = target[property]
-
-                return this.propsProxy[property]
-                // If it does not exist, return the internal _value
-               
-            },
-            
-            
-        }
         // ------------------------------------------------------//
         get vars () {
             return this.variables.value.vars
         }
         
         connectedCallback() {
-            this.#script(this, this.propsProxy)
-       
+            this.#script(this, this.variables.value.vars)
         }
 
         disconnectedCallback() {
@@ -118,10 +73,7 @@ class States{
         this.dependencies = []
         this.ecjs = dom?dom:ecjs
     }
-
-    apply (target, thisArg, argumentsList) {
-        return this
-    }
+   
 
     bind(object){
         if (typeof object == 'string'){
@@ -137,20 +89,18 @@ class States{
         const element = object
 
         if (object instanceof States){
-           console.log("OBJECT!")
-           console.log(this)
+           
             useEffect((object)=>{
-                console.log("CHANGING")
-                object._value = this._value
+                object.value = this.value
             }, [this], object)
+
             object.value = this.value
-            console.log('dependeidnec',this.dependencies)
+
         } else if (object instanceof HTMLElement){
             useEffect((object)=>{
                 element.innerHTML = this._value
             }, [this], object)
             element.innerHTML = this._value
-            
         } else {
             throw Error('Object must be HTMLElement or States object or "selector string"')
         }
@@ -184,15 +134,10 @@ class States{
     }
 
 
-    invoke(index){
-        if (index){
-            this.dependencies[index].func(this.dependencies[index.args])
-            return this
-        }
+    invoke(){
         this.dependencies.forEach((_value, index)=>{
             _value.func(_value.args)
         })
-        return this
     }
 }
 
@@ -203,15 +148,12 @@ function useState (initialValue, dom) {
 }
 
 function useEffect (script, dependencies, args) {
- 
     dependencies.forEach((state, index)=>{
         if (!state){
-            console.warn(`one or more specified %cState%c object must be a ${state}`,"font-weight: bold;   color: orange;","")
-        }
         
+            console.warn(`one or more specified %cState%c object is ${state}`,"font-weight: bold;   color: orange;","")
+        }
         state.dependencies.push({func: script, args: args})
-        state.invoke(state.dependencies.length - 1)
-
     })
 }
 

@@ -40,7 +40,8 @@
 <body>
     
     <material-card id="material-card" title="Cool Item" caption="This is a cool item" price="$50" src="https://picsum.photos/1000"></material-card>
-    <custom-button id="custom-button" text="Change Image"></custom-button>
+    <custom-button id="custom-button" buttonName = "Change Image"></custom-button>
+
 </body>
 
 <script type="module">
@@ -48,9 +49,7 @@
     import '/components/material-card.js'
     import '/components/custom-button.js'
 
-    select('custom-button').onclick.current = () => {
-        select('material-card').src.current = `https://picsum.photos/1000?random=${Math.random()}`
-    }
+   
 
 </script>
 

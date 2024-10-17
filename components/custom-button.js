@@ -29,18 +29,23 @@ const template = /*html*/`
             }
         }
     </style>
-    <button class="responsive-button">Click Me!</button>
-
-`
+    <button class="responsive-button" onclick="dom().sayHelloWorld()"></button>
+`// dom() will refer to the create component script.
 
 ecjs.createComponent('custom-button', template, 
-    (dom, vars)=>{
-        vars.button = dom.useState(dom.getAttribute("text")).bind('.responsive-button')
-        dom.onclick = useState()
+    (dom, props)=>{ 
+        props.someProp //  state variable with initial value based on prop passed; 
+        props.buttonName.bind('.responsive-button') // state variable with initial value based on prop passed; also binded to button
+        const someString = props.$buttonName // returns buttonName value (log: "Change Image")
+        props.buttonName = "Next Image" // changes value of buttonName; automatically changes with binded elements or states
         
-        useEffect(()=>{
-            dom.select('.responsive-button').onclick = dom.onclick.current
-        }, [dom.onclick])
+        dom.sayHelloWorld = () => {
+            alert(`before: ${someString}\nafter: ${props.$buttonName}`)
+
+        }
 
     }
 )
+
+// get parent element based on naming
+// make props by simply initializing
